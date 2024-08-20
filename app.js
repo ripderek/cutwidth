@@ -4,6 +4,13 @@ const TratamientoData = require('./TratamientoData');
 const Permutaciones = require('./Permutaciones');
 const CudWidth = require('./CudWidth');
 
+/*
+* Variables globales como por el numero de muestras y el tamaño de la poblacion
+*
+* */
+const Numero_Muestras= 100;
+const Numero_Poblacion = 3;
+
 const Main = () => {
     //iniciar un temporizador para medir el tiempo de ejecucion
     const startTime = performance.now();
@@ -24,10 +31,10 @@ const Main = () => {
     TratamientoData.EscribirArchivo(Encabezado,NombreArchivo);
     //Matriz sin encabezado
     const Matriz = TratamientoData.CrearMatrizFilas(Data);
-    console.log("Adyacencias");
-    console.log(Matriz);
-    TratamientoData.EscribirArchivo("Adyacencias",NombreArchivo);
-    TratamientoData.EscribirArchivo(Matriz,NombreArchivo);
+   // console.log("Adyacencias");
+   // console.log(Matriz);
+   // TratamientoData.EscribirArchivo("Adyacencias",NombreArchivo);
+    //TratamientoData.EscribirArchivo(Matriz,NombreArchivo);
     //Verificar que los dos primeros numeros sean iguales ya que corresponden al numero de vertices
     if (Encabezado[0]!==Encabezado[1])
     {
@@ -44,17 +51,66 @@ const Main = () => {
         console.log(`El numero de aristas ${Encabezado[2]} es diferente del numero de adyacencias de la matriz ${Matriz.length}`);
         return null;
     }
+
+
     //Calcular la poblacion mediante el factorial del numero de vertices
-    const Poblacion = Factorial.Calcular(Encabezado[1]);
-    console.log(`Poblacion: ${Poblacion}`);
-    TratamientoData.EscribirArchivo(`Poblacion: ${Poblacion}`,NombreArchivo);
+    //const Poblacion = Factorial.Calcular(Encabezado[1]);
+   // console.log(`Poblacion: ${Poblacion}`);
+    //TratamientoData.EscribirArchivo(`Poblacion: ${Poblacion}`,NombreArchivo);
     //generar el vector inicial de la combinacion
-    const PrimerCombinacion = Permutaciones.generarVector(Encabezado[0]);
-    const Combinaciones = Permutaciones.generarPermutaciones(PrimerCombinacion);
+   // const PrimerCombinacion = Permutaciones.generarVector(Encabezado[0]);
+   // const Combinaciones = Permutaciones.generarPermutaciones(PrimerCombinacion);
+    let Maximo = 0;
+    let Min_Cud=0;
+    let Min_Muesta=0;
+    //recorrer el numero de muestras
+    for (var i = 1; i <= Numero_Muestras; i++) {
+        TratamientoData.EscribirArchivo(`-----------------------------------------------------------------------------------------------`,NombreArchivo);
+        TratamientoData.EscribirArchivo(`Muestra: ${i}`, NombreArchivo);
 
-    // console.log(`Combinaciones`)
-    //console.log(Combinaciones);
+        console.log(`Muestra numero: ${i}`);
+        //Resetear el contador
+        Maximo=0;
+        //generar la poblacion segun el numero de poblacion
+        for (var j = 1; j <= Numero_Poblacion; j++) {
+            TratamientoData.EscribirArchivo(`.....................................`,NombreArchivo);
 
+            console.log(`Poblacion: ${j}`);
+            //generar una combinacion de manera aleatoria
+            let VectorCombinacion = Permutaciones.generarVectorAleatorio(Encabezado[0]);
+            console.log(VectorCombinacion);
+            TratamientoData.EscribirArchivo(`Población ${j}  : [ ${VectorCombinacion} ]`,NombreArchivo);
+            //Ahora realizar el CudWIth con dicho vector generao skere modo diablo
+            let CudWidthCaculado = CudWidth.calcularCutwidth(VectorCombinacion,Matriz,NombreArchivo);
+            console.log(`Maximo CUdWidth calculado de la combinacion: ${CudWidthCaculado}`);
+            TratamientoData.EscribirArchivo(`Maximo CUdWidth calculado de la combinacion: ${CudWidthCaculado}`,NombreArchivo);
+            if (CudWidthCaculado>Maximo)
+            {
+                Maximo=CudWidthCaculado;
+            }
+        }
+        TratamientoData.EscribirArchivo(`- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -`,NombreArchivo);
+        TratamientoData.EscribirArchivo(`Maximo encontrado en la muestra numero: ${i} es de: W=${Maximo}`,NombreArchivo);
+        if(Min_Cud===0)
+            Min_Cud=Maximo;
+        if(Maximo<Min_Cud){
+            Min_Cud=Maximo;
+            Min_Muesta=i;
+        }
+
+    }
+    TratamientoData.EscribirArchivo(`    `,NombreArchivo);
+    TratamientoData.EscribirArchivo(`    `,NombreArchivo);
+
+    TratamientoData.EscribirArchivo(`//////--------------[ R E S U L T A D O ]--------------\\\\\\`,NombreArchivo);
+    TratamientoData.EscribirArchivo(`Minimo CudWidht encontrado es de : W=${Min_Cud} de la muestra numero: ${Min_Muesta}`,NombreArchivo);
+    const endTime = performance.now(); // Detiene el temporizador
+    const executionTime = (endTime - startTime) / 1000; // Tiempo en segundos
+    console.log(`Tiempo de ejecución total: ${executionTime} segundos`);
+    TratamientoData.EscribirArchivo(`Tiempo de ejecución total: ${executionTime} segundos`,NombreArchivo);
+
+
+    /*
     //recorrer todas las combinaciones para obtener el CudWidth
     //guardar el minimo cudWith de las combinaciones, la combinacion y el indice
     let MinCudWidth = 0;
@@ -100,7 +156,7 @@ const Main = () => {
     const executionTime = (endTime - startTime) / 1000; // Tiempo en segundos
     console.log(`Tiempo de ejecución total: ${executionTime} segundos`);
     TratamientoData.EscribirArchivo(`Tiempo de ejecución total: ${executionTime} segundos`,NombreArchivo);
-
+    */
 }
 
 
