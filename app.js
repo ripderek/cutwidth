@@ -61,6 +61,7 @@ const Main = () => {
    // const PrimerCombinacion = Permutaciones.generarVector(Encabezado[0]);
    // const Combinaciones = Permutaciones.generarPermutaciones(PrimerCombinacion);
     let Maximo = 0;
+    let Minimo = 0;
     let Min_Cud=0;
     let Min_Muesta=0;
     //recorrer el numero de muestras
@@ -71,6 +72,7 @@ const Main = () => {
         console.log(`Muestra numero: ${i}`);
         //Resetear el contador
         Maximo=0;
+        Minimo=0;
         //generar la poblacion segun el numero de poblacion
         for (var j = 1; j <= Numero_Poblacion; j++) {
             TratamientoData.EscribirArchivo(`.....................................`,NombreArchivo);
@@ -84,17 +86,27 @@ const Main = () => {
             let CudWidthCaculado = CudWidth.calcularCutwidth(VectorCombinacion,Matriz,NombreArchivo);
             console.log(`Maximo CUdWidth calculado de la combinacion: ${CudWidthCaculado}`);
             TratamientoData.EscribirArchivo(`Maximo CUdWidth calculado de la combinacion: ${CudWidthCaculado}`,NombreArchivo);
+            if(Minimo===0)
+            {
+                Minimo=CudWidthCaculado;
+            }
+            if(CudWidthCaculado<Minimo)
+            {
+                Minimo=CudWidthCaculado;
+            }
+            /*
             if (CudWidthCaculado>Maximo)
             {
                 Maximo=CudWidthCaculado;
             }
+             */
         }
         TratamientoData.EscribirArchivo(`- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -`,NombreArchivo);
-        TratamientoData.EscribirArchivo(`Maximo encontrado en la muestra numero: ${i} es de: W=${Maximo}`,NombreArchivo);
+        TratamientoData.EscribirArchivo(`Minimo encontrado en la muestra numero: ${i} es de: W=${Minimo}`,NombreArchivo);
         if(Min_Cud===0)
-            Min_Cud=Maximo;
-        if(Maximo<Min_Cud){
-            Min_Cud=Maximo;
+            Min_Cud=Minimo;
+        if(Minimo<Min_Cud){
+            Min_Cud=Minimo;
             Min_Muesta=i;
         }
 
